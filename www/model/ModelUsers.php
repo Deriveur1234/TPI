@@ -6,27 +6,19 @@
 // Auteur: Loïc Burnand
 // Version 1.0 PC 9.5.2019 / Codage initial
 
-/**
- * @remark Mettre le bon chemin d'accès à votre fichier contenant les constantes
- */
-require_once $_SERVER['DOCUMENT_ROOT'].'/db/database.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/model/EUser.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/model/ERole.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/model/ECourt.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/model/EReservation.php';
 
-class Users
+class ModelUsers
 {
 	/**
 	 * @brief Retourne le tableau des utilisateurs de type EUser
 	 * @return [array of EUser] Le tableau de EUser
 	 */
-	function GetAllUsers()
+	static function GetAllUsers()
 	{
 		// On crée un tableau qui va contenir les objets EUser
 		$arr = array();
 
-		$s = "SELECT `Nickname`, `Name`, `Firstname`, `Phone`, `email`, `IsConfirmed`, `IdRole` FROM `tpi`.`USER`";
+		$s = "SELECT `Nickname`, `Name`, `Firstname`, `Phone`, `email`, `IsConfirmed`, `CodeRole` FROM `tpi`.`USER`";
 		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		try {
 			$statement->execute();
@@ -39,7 +31,7 @@ class Users
 		while ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
 			// On crée l'objet EUser en l'initialisant avec les données provenant
 			// de la base de données
-			$u = new EUser($row['Nickname'], $row['Name'], $row['Firstname'], $row['Phone'], $row['email'], $row['IsConfirmed'], new ERole($row['IdRole']));
+			$u = new EUser($row['email'], $row['Nickname'], $row['Name'], $row['Firstname'], $row['Phone'], new ERole($row['CodeRole']), $row['IsConfirmed']);
 			// On place l'objet EUser créé dans le tableau
 			array_push($arr, $u);
 		}        
@@ -47,9 +39,80 @@ class Users
 		return $arr;
 	}
 
-	function GetUserById(int $Id)
+	/**
+	 * @brief Cherche un utilisateur par son Id dans la table 
+	 * @param nickname	Le nickname a recherché dans la base de donnée
+	 * @return [EUser] Retourne le premier utilisateur du résultat de la requête
+	 */
+	static function GetUserByNickname($nickname)
 	{
-		
+		$s = "SELECT `Nickname`, `Name`, `Firstname`, `Phone`, `email`, `IsConfirmed`, `CodeRole` FROM `tpi`.`USERS` WHERE `Nickname` = :e";
+	
+		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		try {
+			$statement->execute(array(':e' => $nickname));
+		}
+		catch (PDOException $e) {
+			echo 'Problème de lecture de la base de données: '.$e->getMessage();
+			return false;
+		}
+		// On parcoure les enregistrements 
+		if ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
+			// On crée l'objet EUser en l'initialisant avec les données provenant
+			// de la base de données et on le retourne 
+			return new EUser($row['email'], $row['Nickname'], $row['Name'], $row['Firstname'], $row['Phone'], new ERole($row['CodeRole']), $row['IsConfirmed']);
+		}
+		// On retourne null si il n'y a pas d'utilisateur
+		return null;
+	}
+
+	/**
+	 * @brief Ajoute un utilisateur dans la base de donnée
+	 * @param User l'utilisateur a ajouté sous forme de EUser
+	 * @return [bool] Retourne true si l'ajout est réussi, sinon retourne false
+	 */
+	static function AddUser($user)
+	{
+		$s = "INSERT INTO `tpi`.`users`(`Nickname`, `Name`, `Firstname`, `Password`, `Phone`, `email`, `IsConfirmed`, `CodeRole`) VALUES (:nc, :na, :fn, pw , :ph, :e, :ic, :cr);";
+		$statement = EDatabase::prepare($s);
+		try {
+			$statement->execute(array(':nc' => $user->Nickname, ':na' => $user->Name, ':fn' => $user->FirstName, ':pw' => $user->Password, ':ph' => $user->Phone, ':e' => $user->Email, ':ic' => $user->IsConfirmed, ':cr' => $user->Role->CodeRole ));
+		}
+		catch (PDOException $e) {
+			echo 'Problème d\'insertion dans la base de données: '. $e->getMessage();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @brief Permet de metter à jours les donnée d'un utilisateur
+	 * @param User l'utilisateur que l'on souhaite modifié
+	 * @return [bool] Retourne true si l'update est réussi, sinon retourne false
+	 */
+	static function UpdateUser($User)
+	{
+		$s = "UPDATE `TPI`.`USERS` SET `Name` = :na, `Firstname` = :fn, `Phone` = :ph, `email` = :e, `IsConfirmed` = :ic, `CodeRole` = :cr WHERE `Nickname` = :nc";
+		$statement = EDatabase::prepare($s);
+		try {
+			$statement->execute(array(':nc' => $user->Nickname, 'na' => $user->Name, 'fn' => $user->Firstname, 'ph' => $user->Phone, ':e' => $user->Email, 'ic' => $user->IsConfirmed, 'cr' => $user->Role->CodeRole ));
+		}
+		catch (PDOException $e) {
+			echo 'Problème de mise à jour dans la base de données: '.$e->getMessage();
+			return false;
+		}
+		// Ok
+		return true;
+	}
+
+	/**
+	 * @brief Retourne le nom du rôle de l'utilisateur
+	 * @param User L'utilisateur du quel on souhaite récupérer le rôle
+	 * @return [string] Le nom du rôle
+	 */
+	static function GetUserRole($User)
+	{
+
 	}
 }
 

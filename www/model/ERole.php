@@ -14,22 +14,22 @@
 class ERole {
 	/**
 	 * @brief	Le Constructor appelé au moment de la création de l'objet. Ie. new ERole();
-	 * @param InEmail		L'email de l'utilisateur. (Optionel) Defaut ""
-	 * @param InNickname	Le nickname de l'utilisateur. (Optionel) Defaut ""
+	 * @param InCodeRole	Le code du rôle
+	 * @param InName		Le nom du rôle. (Optionel) Defaut ""
 	  */
-    public function __construct($InIdRole = null, $InName = "")
+    public function __construct($InCodeRole, $InName = "")
     {
-        $this->IdRole = $InIdRole;
+        $this->CodeRole = $InCodeRole;
 		$this->Name = $InName;
 	}
 
     /**
-     * @var int Id du Role
+     * @var int code du Role
      */
-    public $IdRole;
+    public $CodeRole;
 
 	/**
-	 * @var string Le nom de l'utilisateur
+	 * @var string Le nom du role
 	 */
     public $Name;
 }

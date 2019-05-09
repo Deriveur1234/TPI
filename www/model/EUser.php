@@ -20,10 +20,10 @@ class EUser {
 	/**
 	* @brief	Le Constructor appelé au moment de la création de l'objet. Ie. new EUser();
 	* @param InEmail		L'email de l'utilisateur. (Optionel) Defaut ""
-	* @param InNickname	Le nickname de l'utilisateur. (Optionel) Defaut ""
-	* @param InName	    Le nom de l'utilisateur. (Optionel) Defaut ""
-	* @param InFirstName   Le prénom de l'utilisateur. (Optionel) Defaut ""
-	* @param InPhone       Le numéro de téléphone de l'utilisateur. (Optionel) Defaut ""
+	* @param InNickname		Le nickname de l'utilisateur. (Optionel) Defaut ""
+	* @param InName	    	Le nom de l'utilisateur. (Optionel) Defaut ""
+	* @param InFirstName   	Le prénom de l'utilisateur. (Optionel) Defaut ""
+	* @param InPhone      	Le numéro de téléphone de l'utilisateur. (Optionel) Defaut ""
 	* @param InRole			Le role de l'utilisateur. (Optionel) Defaut null
 	* @param InCofirmation	Est-ce que l'utilisateur est confirmé. (Optionel) Defaut false
 	 */
@@ -55,13 +55,21 @@ class EUser {
      */
     public $FirstName;
 
+
+	/**
+	 * @var string Le mot de passe de l'utilisateur
+	 * cette propriété sert principalement pour l'ajout d'utilisateur
+	 * et jamais le mot de passe est stocké en clair
+	 */
+	public $Password;
+
     /**
 	 * @var string le numéro de téléphone 
 	 */
 	public $Phone;
 		
 	/**
-	 * @var ERole le role de l'utilisateur
+	 * @var int le rôle de l'utilisateur
 	 */
 	public $Role;
 

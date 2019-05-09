@@ -39,7 +39,7 @@ class EResevation {
     public $User;
     
     /**
-     * @var date La date et l'heure de la reservation 
+     * @var DateTime La date et l'heure de la reservation 
      */
     public $Date;
 }
