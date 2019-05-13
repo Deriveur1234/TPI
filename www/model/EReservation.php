@@ -13,7 +13,7 @@
  *          Exemple d'utilisation 2
  *          $u = new EResevation(new ECourt(), new EUser(), false, "");
  */
-class EResevation {
+class EReservation {
 	/**
 	 * @brief	Le Constructor appelé au moment de la création de l'objet. Ie. new EResevation();
 	 * @param InCourt		Le terrain reservé. (Optionel) Defaut ""
@@ -21,11 +21,10 @@ class EResevation {
 	 * @param InConfirmed   La confirmation de la reservation. (Optionel) Defaut false
      * @param InDate        La date et l'heure de la reservation. (Optionel) Defaut ""
 	  */
-    public function __construct($InCourt = "", $InUser = "", $InConfirmed = false, $InDate = "")
+    public function __construct($InCourt = "", $InUser = "", $InDate = "")
     {
 		$this->Court = $InCourt;
 		$this->User = $InUser;
-        $this->IsConfirmed = $InConfirmed;
         $this->Date = $InDate;
 	}
 	/**

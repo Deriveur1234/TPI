@@ -1,8 +1,4 @@
 <?php
-
-/**
- * @remark Mettre le bon chemin d'accès à votre fichier contenant les constantes
- */
 require_once $_SERVER['DOCUMENT_ROOT'].'/db/database.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/EUser.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/ERole.php';
@@ -18,16 +14,5 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelReservations.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelPreferences.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelTokens.php';
 
-class ControllerSquash
-{
-    static function AllUsers()
-    {
-        $users = ModelUsers::GetAllUsers();
-        include  $_SERVER['DOCUMENT_ROOT'].'/view/User/listAll.php';
-    }
+print_r(ModelTokens::GetTokenByNickname("Test"));
 
-    static function AllReservations()
-    {
-        
-    }
-}

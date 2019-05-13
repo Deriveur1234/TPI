@@ -21,8 +21,9 @@ class EPreference {
 	  */
     public function __construct($InBeginTime, $InEndTime, $InNbReservation)
     {
-        $this->IdRole = $InIdRole;
-		$this->Name = $InName;
+        $this->BeginTime = $InBeginTime;
+        $this->EndTime = $InEndTime;
+        $this->NbReservation = $InNbReservation;
 	}
 
     /**

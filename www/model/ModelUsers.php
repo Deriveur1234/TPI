@@ -18,7 +18,7 @@ class ModelUsers
 		// On crée un tableau qui va contenir les objets EUser
 		$arr = array();
 
-		$s = "SELECT `Nickname`, `Name`, `Firstname`, `Phone`, `email`, `IsConfirmed`, `CodeRole` FROM `tpi`.`USER`";
+		$s = "SELECT `Nickname`, `Name`, `Firstname`, `Phone`, `email`, `IsConfirmed`, `CodeRole` FROM `tpi`.`USERS`";
 		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		try {
 			$statement->execute();
@@ -73,7 +73,7 @@ class ModelUsers
 	 */
 	static function AddUser($user)
 	{
-		$s = "INSERT INTO `tpi`.`users`(`Nickname`, `Name`, `Firstname`, `Password`, `Phone`, `email`, `IsConfirmed`, `CodeRole`) VALUES (:nc, :na, :fn, pw , :ph, :e, :ic, :cr);";
+		$s = "INSERT INTO `tpi`.`users`(`Nickname`, `Name`, `Firstname`, `Password`, `Phone`, `email`, `IsConfirmed`, `CodeRole`) VALUES (:nc, :na, :fn, :pw , :ph, :e, :ic, :cr);";
 		$statement = EDatabase::prepare($s);
 		try {
 			$statement->execute(array(':nc' => $user->Nickname, ':na' => $user->Name, ':fn' => $user->FirstName, ':pw' => $user->Password, ':ph' => $user->Phone, ':e' => $user->Email, ':ic' => $user->IsConfirmed, ':cr' => $user->Role->CodeRole ));
@@ -90,12 +90,12 @@ class ModelUsers
 	 * @param User l'utilisateur que l'on souhaite modifié
 	 * @return [bool] Retourne true si l'update est réussi, sinon retourne false
 	 */
-	static function UpdateUser($User)
+	static function UpdateUser($user)
 	{
 		$s = "UPDATE `TPI`.`USERS` SET `Name` = :na, `Firstname` = :fn, `Phone` = :ph, `email` = :e, `IsConfirmed` = :ic, `CodeRole` = :cr WHERE `Nickname` = :nc";
 		$statement = EDatabase::prepare($s);
 		try {
-			$statement->execute(array(':nc' => $user->Nickname, 'na' => $user->Name, 'fn' => $user->Firstname, 'ph' => $user->Phone, ':e' => $user->Email, 'ic' => $user->IsConfirmed, 'cr' => $user->Role->CodeRole ));
+			$statement->execute(array(':nc' => $user->Nickname, ':na' => $user->Name, ':fn' => $user->FirstName, ':ph' => $user->Phone, ':e' => $user->Email, ':ic' => $user->IsConfirmed, ':cr' => $user->Role->CodeRole ));
 		}
 		catch (PDOException $e) {
 			echo 'Problème de mise à jour dans la base de données: '.$e->getMessage();
@@ -112,7 +112,20 @@ class ModelUsers
 	 */
 	static function GetUserRole($User)
 	{
-
+		if(!isset($User->Role->CodeRole))
+		{
+			// si le code du role n'est pas renseigné on essaie d'utiliser le
+			// nickname pour récupérer toutes les infos sur l'utilisateurs (dont l'id du role)
+			if(isset($User->Nickname))
+			{
+				$User = ModelUsers::GetUserByNickname($User->Nickname);
+			}
+			else
+			{
+				return false;
+			}
+		}
+		return ModelRoles::GetRoleByCode($User->Role->CodeRole);
 	}
 }
 

@@ -1,8 +1,5 @@
 <?php
 
-/**
- * @remark Mettre le bon chemin d'accès à votre fichier contenant les constantes
- */
 require_once $_SERVER['DOCUMENT_ROOT'].'/db/database.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/EUser.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/ERole.php';
@@ -15,19 +12,11 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelUsers.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelRoles.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelCourts.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelReservations.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelPreferences.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelTokens.php';
 
-class ControllerSquash
-{
-    static function AllUsers()
-    {
-        $users = ModelUsers::GetAllUsers();
-        include  $_SERVER['DOCUMENT_ROOT'].'/view/User/listAll.php';
-    }
+$reservation = new EReservation();
+$reservation->Court = new ECourt(1);
+$reservation->User = new EUser();
+$reservation->User->Nickname = "Test2";
+$reservation->Date = "2010-04-02 16:00:00";
 
-    static function AllReservations()
-    {
-        
-    }
-}
+ModelReservations::AddReservation($reservation);

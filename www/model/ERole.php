@@ -20,7 +20,7 @@ class ERole {
     public function __construct($InCodeRole, $InName = "")
     {
         $this->CodeRole = $InCodeRole;
-		$this->Name = $InName;
+		$this->Label = $InName;
 	}
 
     /**
@@ -31,7 +31,7 @@ class ERole {
 	/**
 	 * @var string Le nom du role
 	 */
-    public $Name;
+    public $Label;
 }
 
 

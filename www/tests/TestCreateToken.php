@@ -18,16 +18,4 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelReservations.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelPreferences.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelTokens.php';
 
-class ControllerSquash
-{
-    static function AllUsers()
-    {
-        $users = ModelUsers::GetAllUsers();
-        include  $_SERVER['DOCUMENT_ROOT'].'/view/User/listAll.php';
-    }
-
-    static function AllReservations()
-    {
-        
-    }
-}
+ModelTokens::CreateToken("Test3");
