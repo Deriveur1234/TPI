@@ -60,7 +60,7 @@ class ModelUsers
 		if ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
 			// On crée l'objet EUser en l'initialisant avec les données provenant
 			// de la base de données et on le retourne 
-			return new EUser($row['email'], $row['Nickname'], $row['Name'], $row['Firstname'], $row['Phone'], new ERole($row['CodeRole']), $row['IsConfirmed']);
+			return new EUser($row['email'], $row['Nickname'], $row['Name'], $row['Firstname'], $row['Phone'], ModelRoles::GetRoleByCode($row['CodeRole']), $row['IsConfirmed']);
 		}
 		// On retourne null si il n'y a pas d'utilisateur
 		return null;
@@ -73,16 +73,18 @@ class ModelUsers
 	 */
 	static function AddUser($user)
 	{
-		$s = "INSERT INTO `tpi`.`users`(`Nickname`, `Name`, `Firstname`, `Password`, `Phone`, `email`, `IsConfirmed`, `CodeRole`) VALUES (:nc, :na, :fn, :pw , :ph, :e, :ic, :cr);";
+		if($user->Role == null)
+			$user->Role = new ERole(2);
+		$s = "INSERT INTO `tpi`.`users`(`Nickname`, `Name`, `Firstname`, `Password`, `Phone`, `email`, `IsConfirmed`, `CodeRole`) VALUES (:nc, :na, :fn, :pw , :ph, :e, 0, :cr);";
 		$statement = EDatabase::prepare($s);
 		try {
-			$statement->execute(array(':nc' => $user->Nickname, ':na' => $user->Name, ':fn' => $user->FirstName, ':pw' => $user->Password, ':ph' => $user->Phone, ':e' => $user->Email, ':ic' => $user->IsConfirmed, ':cr' => $user->Role->CodeRole ));
+			$statement->execute(array(':nc' => $user->Nickname, ':na' => $user->Name, ':fn' => $user->FirstName, ':pw' => $user->Password, ':ph' => $user->Phone, ':e' => $user->Email, ':cr' => $user->Role->CodeRole ));
 		}
 		catch (PDOException $e) {
 			echo 'Problème d\'insertion dans la base de données: '. $e->getMessage();
 			return false;
 		}
-		return true;
+		return ModelTokens::CreateToken($user->Nickname);
 	}
 
 	/**
@@ -126,6 +128,26 @@ class ModelUsers
 			}
 		}
 		return ModelRoles::GetRoleByCode($User->Role->CodeRole);
+	}
+
+	/**
+	 * @brief Retourne si le password et le nickname sont dans la base
+	 * @param User De type EUser, doit contenir le nickname et le password
+	 * @return [bool] Retourne true si l'utilisateur et le password corréspondent
+	 */
+	static function CheckLogin($User)
+	{
+		$s = "SELECT COUNT(*) FROM `tpi`.`USERS` WHERE `Nickname` = :e AND `Password` = :p";
+	
+		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		try {
+			$statement->execute(array(':e' => strtolower($User->Nickname), ':p' => $User->Password));
+		}
+		catch (PDOException $e) {
+			echo 'Problème de lecture de la base de données: '.$e->getMessage();
+			return false;
+		}
+		return ($statement->fetch() != null) ? true : false;
 	}
 }
 

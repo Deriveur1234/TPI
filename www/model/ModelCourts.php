@@ -108,6 +108,54 @@ class ModelCourts
      */
     static function DeleteCourt($Court)
     {
+				if(ModelCourts::IsCourtReferenc($Court))
+					return ModelCourts::MarkCourtDeleted($Court);
+				else
+				{
+					$s = "DELETE FROM `TPI`.`COURTS` WHERE  `IdCourt` = :id";
+					$statement = EDatabase::prepare($s);
+					try {
+						$statement->execute(array(':id' => $Court->Id));
+					}
+					catch (PDOException $e) {
+						echo 'Problème de mise à jour dans la base de données: '.$e->getMessage();
+						return false;
+					}
+					// Ok
+					return true;
+				}
+		}
+		
+		static function IsCourtReferenc($court)
+		{
+			$s = "SELECT COUNT(*) FROM `tpi`.`RESERVATIONS` WHERE `IdCourt` = :e";
+	
+			$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+			try {
+				$statement->execute(array(':e' => $court->Id));
+			}
+			catch (PDOException $e) {
+				echo 'Problème de lecture de la base de données: '.$e->getMessage();
+				return false;
+			}
+			$result = $statement->fetch();
+			return ($result['COUNT(*)'] > 0) ? true : false;
+		}
 
-    }
+		static function MarkCourtDeleted($court)
+		{
+			$s = "UPDATE `tpi`.`courts` SET `Deleted` = 1 WHERE `IdCourt` = :id";
+			$statement = EDatabase::prepare($s);
+			try {
+				$statement->execute(array(':id' => $court->Id));
+			}
+			catch (PDOException $e) {
+				echo 'Problème de mise à jour dans la base de données: '.$e->getMessage();
+				return false;
+			}
+			// Ok
+			return true;
+		}
+
+		
 }
