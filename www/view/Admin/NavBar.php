@@ -20,7 +20,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#"><?= isset($_SESSION['User']) ? unserialize($_SESSION['User'])->Nickname : "" ?></a>
+                <a class="nav-link" href="#"><?= (ESession::GetUser() === false) ? "" : GetUser()->Nickname ?></a>
             </li>
             <li class="nav-item">
             <button class="btn btn-light">Log out</button>

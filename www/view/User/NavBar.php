@@ -8,7 +8,7 @@
             </a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="#">Mes réservations</a>
+            <a class="nav-link" href="?action=MyReservation">Mes réservations</a>
             </li>
         </ul>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,7 +17,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#"><?= isset($_SESSION['User']) ? unserialize($_SESSION['User'])->Nickname : "" ?></a>
+                <a class="nav-link" href="#"><?=  (ESession::GetUser() === false) ? "" : ESession::GetUser()->Nickname ?></a>
             </li>
             <li class="nav-item">
             <button class="btn btn-light">Log out</button>

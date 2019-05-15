@@ -14,7 +14,8 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/controller/ControllerSquash.php';
 $action = (isset($_GET['action']))? $_GET['action'] : null;
 
 //Si l'utilisateur est connecté, récupère son role. Sinon mets le role à null
-$role = (isset($_SESSION['User'])) ? unserialize($_SESSION['User'])->Role : null;
+$u = ESession::GetUser();
+$role = ($u === false) ? null : $u->Role;
 
 
 if($role === null)
@@ -41,6 +42,9 @@ switch($action)
         break;
     case 'Accueil' :
         ControllerSquash::AllUsers();
+        break;
+    case 'MyReservation' :
+        ControllerSquash::MyReservations($u);
         break;
     case null :
         ControllerSquash::AllUsers();

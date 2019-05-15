@@ -12,6 +12,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/model/EReservation.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/EToken.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/EPreference.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/model/EEmail.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/model/ESession.php';
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelUsers.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Model/ModelRoles.php';
@@ -36,7 +37,7 @@ class ControllerSquash
             $User->Password = sha1($User->Password);
             if(ModelUsers::CheckLogin($User))
             {
-                $_SESSION['User'] = serialize(ModelUsers::GetUserByNickname($User->Nickname));
+                ESession::SetUser(ModelUsers::GetUserByNickname($User->Nickname));
                 header("Location: index.php?action=Accueil");
             }
         }
@@ -54,6 +55,7 @@ class ControllerSquash
             $user->Name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
             $user->Firstname = filter_input(INPUT_POST, 'firstname', FILTER_SANITIZE_SPECIAL_CHARS);
             $user->Phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
+            $user->Password = sha1($user->Password);
             ModelUsers::AddUser($user);
             $Email = new EEmail($user->Email, "Confirmation de votre compte");
             $Email->Body = '<html>' .
@@ -73,7 +75,12 @@ class ControllerSquash
 
     static function EmailRegisterSend()
     {
-        include $_SERVER['DOCUMENT_ROOT'].'/view/emailRegistrationSend.html';
+        include $_SERVER['DOCUMENT_ROOT'].'/view/Email/emailRegistrationSend.html';
+    }
+
+    static function EmailValidation()
+    {
+
     }
 
     static function Logout()
@@ -89,8 +96,9 @@ class ControllerSquash
         include  $_SERVER['DOCUMENT_ROOT'].'/view/User/listAll.php';
     }
 
-    static function AllReservations()
+    static function MyReservations($user)
     {
-        
+        $reservations = ModelReservations::GetReservationsByUser($user);
+        include  $_SERVER['DOCUMENT_ROOT'].'/view/User/myReservations.php';
     }
 }

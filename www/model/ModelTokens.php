@@ -80,5 +80,15 @@ class ModelTokens
             $token .= $keys[mt_rand(0, $c - 1)];
         }
         return $token;
-    }
+	}
+	
+	/**
+	 * Accepte un utilisateur grâce à son token
+	 * @param token Le token a validé
+	 * @return bool Retourne true si l'acceptation est réussie, sinon retourne false
+	 */
+	static function acceptToken($token)
+	{
+		
+	}
 }
