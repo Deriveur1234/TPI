@@ -3,7 +3,7 @@
     <div class="container">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-            <a class="nav-link" href="#">Home
+            <a class="nav-link" href="?action=Accueil">Home
                 <span class="sr-only">(current)</span>
             </a>
             </li>

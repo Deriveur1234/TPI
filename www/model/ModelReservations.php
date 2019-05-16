@@ -93,7 +93,7 @@ class ModelReservations
             return false;
         }
         // On parcoure les enregistrements 
-        if ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
+        while ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
             // On crée l'objet EReservation en l'initialisant avec les données provenant
             // de la base de données
             $u = new EReservation(ModelCourts::GetCourtById($row['IdCourt']), ModelUsers::GetUserByNickname($row['Nickname']), $row['Date']);

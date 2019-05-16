@@ -23,10 +23,26 @@ if($role === null)
     switch($action)
     {
         case 'Register' :
-            ControllerSquash::Register();
+            if(isset($_POST) && count($_POST) == 6)
+            {
+                $user = new EUser();
+                $user->Nickname = filter_input(INPUT_POST, 'nickname', FILTER_SANITIZE_SPECIAL_CHARS);
+                $user->Password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
+                $user->Email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_SPECIAL_CHARS);
+                $user->Name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+                $user->Firstname = filter_input(INPUT_POST, 'firstname', FILTER_SANITIZE_SPECIAL_CHARS);
+                $user->Phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
+                $user->Password = sha1($user->Password);
+                ControllerSquash::Register($user);
+            }
+            include $_SERVER['DOCUMENT_ROOT'].'/view/register.html';
             break;
         case 'EmailRegisterSend' :
             ControllerSquash::EmailRegisterSend();
+            break;
+        case 'EmailConfirmation' :
+            $token = (isset($_GET['token']));
+            ControllerSquash::EmailValidation();
             break;
         default :
             ControllerSquash::Login();
@@ -41,13 +57,21 @@ switch($action)
         ControllerSquash::Logout();
         break;
     case 'Accueil' :
-        ControllerSquash::AllUsers();
+        ControllerSquash::Accueil();
         break;
     case 'MyReservation' :
         ControllerSquash::MyReservations($u);
         break;
+    case 'DeleteReservation' :
+        $user = ESession::GetUser();
+        $reservation = new EReservation();
+        $reservation->Court = ModelCourts::GetCourtById(filter_input(INPUT_GET, 'idCourt', FILTER_SANITIZE_SPECIAL_CHARS));
+        $reservation->User = ModelUsers::GetUserByNickname(filter_input(INPUT_GET, 'Nickname', FILTER_SANITIZE_SPECIAL_CHARS));
+        $reservation->Date = filter_input(INPUT_GET, 'date', FILTER_SANITIZE_SPECIAL_CHARS);
+        ControllerSquash::DeleteReservation($reservation, $user);
+        break;
     case null :
-        ControllerSquash::AllUsers();
+        ControllerSquash::Accueil();
         break;
 }
 

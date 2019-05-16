@@ -14,7 +14,7 @@ class ModelPreferences
     static function GetPreferences()
     {
         // On créer la requête
-		$s = "SELECT `Updated`, `BegintTime`, `EndTime`, `NbReservationsByUser` FROM `tpi`.`Preferences`";
+		$s = "SELECT `Updated`, `BeginTime`, `EndTime`, `NbReservationsByUser` FROM `tpi`.`Preferences`";
 		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		try {
 			$statement->execute();
@@ -27,7 +27,7 @@ class ModelPreferences
 		while ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
 			// On crée l'objet EUser en l'initialisant avec les données provenant
             // de la base de données et on le retourne
-			return new EUser($row['email'], $row['Nickname'], $row['Name'], $row['Firstname'], $row['Phone'], new ERole($row['CodeRole']), $row['IsConfirmed']);
+			return new EPreference($row['BeginTime'], $row['EndTime'], $row['NbReservationsByUser']);
 		}        
 		// On retourne null si aucun enregistrement n'a été trouvé
 		return $null;
@@ -51,5 +51,22 @@ class ModelPreferences
 		}
 		// Ok
 		return true;
-    }
+	}
+	
+
+	static function GetBeginTime()
+	{
+		$Preferences = ModelPreferences::GetPreferences();
+		$BeginTime = $Preferences->BeginTime;
+		$BeginTime = strtotime($BeginTime);
+		return date('H', $BeginTime);
+	}
+
+	static function GetEndTime()
+	{
+		$Preferences = ModelPreferences::GetPreferences();
+		$EndTime = $Preferences->EndTime;
+		$EndTime = strtotime($EndTime);
+		return date('H', $EndTime);
+	}
 }

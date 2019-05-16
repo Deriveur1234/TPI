@@ -44,33 +44,21 @@ class ControllerSquash
         include  $_SERVER['DOCUMENT_ROOT'].'/view/login.html';
     }
 
-    static function Register()
+    static function Register($user)
     {
-        if(isset($_POST) && count($_POST) == 6)
-        {
-            $user = new EUser();
-            $user->Nickname = filter_input(INPUT_POST, 'nickname', FILTER_SANITIZE_SPECIAL_CHARS);
-            $user->Password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
-            $user->Email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_SPECIAL_CHARS);
-            $user->Name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
-            $user->Firstname = filter_input(INPUT_POST, 'firstname', FILTER_SANITIZE_SPECIAL_CHARS);
-            $user->Phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_SPECIAL_CHARS);
-            $user->Password = sha1($user->Password);
-            ModelUsers::AddUser($user);
-            $Email = new EEmail($user->Email, "Confirmation de votre compte");
-            $Email->Body = '<html>' .
-                    ' <head></head>' .
-                    ' <body>'.
-                    '  <p>Veuillez ouvrir ce lien pour confirmer votre compte : http://127.0.0.1/index.php?action=EmailConfirmation&token=' .
-                     ModelTokens::GetTokenByNickname($user->Nickname)->Code. 
-                    '</p>' .
-                    ' </body>' .
-                    '</html>';
-            ModelEmailSender::SendEmail($Email);
-            header("Location: index.php?action=EmailRegisterSend");
-            exit();
-        }
-        include $_SERVER['DOCUMENT_ROOT'].'/view/register.html';
+        ModelUsers::AddUser($user);
+        $Email = new EEmail($user->Email, "Confirmation de votre compte");
+        $Email->Body = '<html>' .
+                ' <head></head>' .
+                ' <body>'.
+                '  <p>Veuillez ouvrir ce lien pour confirmer votre compte : http://127.0.0.1/index.php?action=EmailConfirmation&token=' .
+                    ModelTokens::GetTokenByNickname($user->Nickname)->Code. 
+                '</p>' .
+                ' </body>' .
+                '</html>';
+        ModelEmailSender::SendEmail($Email);
+        header("Location: index.php?action=EmailRegisterSend");
+        exit();
     }
 
     static function EmailRegisterSend()
@@ -89,10 +77,12 @@ class ControllerSquash
         header("Location: index.php");
     }
 
-    static function AllUsers()
+    static function Accueil()
     {
-        
+        $courts = ModelCourts::GetAllCourts();
         $users = ModelUsers::GetAllUsers();
+        $BeginTime = ModelPreferences::GetBeginTime();
+        $EndTime = ModelPreferences::GetEndTime();
         include  $_SERVER['DOCUMENT_ROOT'].'/view/User/listAll.php';
     }
 
@@ -100,5 +90,16 @@ class ControllerSquash
     {
         $reservations = ModelReservations::GetReservationsByUser($user);
         include  $_SERVER['DOCUMENT_ROOT'].'/view/User/myReservations.php';
+    }
+
+    static function DeleteReservation($reservation, $user)
+    {
+        if(!isset($user->Role))
+        {
+            $user = ModelUsers::GetUserByNickname($user->Nickname);
+        }
+        if($user->Role->Label == "Admin" || $reservation->User->Nickname == $user->Nickname)
+            ModelReservations::DeleteReservation($reservation);
+        header("Location: ?action=Accueil");
     }
 }

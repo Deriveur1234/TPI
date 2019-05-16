@@ -11,26 +11,26 @@
     <title>Squash</title>
   </head>
   <body>
+    <?php include $_SERVER['DOCUMENT_ROOT'].'/view/User/NavBar.php'; ?>
     <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Tabs Titles -->
 
         <!-- Icon -->
         <div class="fadeIn first">
-        <h1>Squash reservation</h1>
+        <h1>Mes réservations</h1>
         </div>
 
         <!-- Login Form -->
-        <form action="#" method="POST">
-            <input type="text" id="login" class="fadeIn second" name="login" placeholder="login"><br/>
-            <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
-            <input type="submit" class="fadeIn fourth" value="Log In">
-        </form>
+        <?php
+        if(isset($reservations))
+        for($i = 0; $i < count($reservations); $i++)
+        {
+          $reservation = $reservations[$i];
+          include $_SERVER['DOCUMENT_ROOT'].'/view/ReservationTemplate.php';
+        }
 
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-        <a class="underlineHover" href="?action=Register">Register</a>
-        </div>
+        ?>
 
     </div>
     </div>

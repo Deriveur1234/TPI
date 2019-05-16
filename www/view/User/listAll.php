@@ -7,7 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    
+    <link rel="stylesheet" href="css/css.css">
     <title>Squash</title>
 
     <link href='./FullCalendar/core/main.css' rel='stylesheet' />
@@ -21,25 +21,26 @@
     <script src='./FullCalendar/list/main.js'></script>
     <script src='./FullCalendar/interaction/main.js'></script>
 
-    <link rel="stylesheet" href="./Datepicker/css/datepicker.css" type="text/css" />
-    <link rel="stylesheet" media="screen" type="text/css" href="./Datepicker/css/layout.css" />
-	  <script type="text/javascript" src="./Datepicker/js/jquery.js"></script>
-	  <script type="text/javascript" src="./Datepicker/js/datepicker.js"></script>
-    <script type="text/javascript" src="./Datepicker/js/eye.js"></script>
-    <script type="text/javascript" src="./Datepicker/js/utils.js"></script>
-    <script type="text/javascript" src="./Datepicker/js/layout.js?ver=1.0.2"></script>
+    <link rel="stylesheet" href="http://cdn.dhtmlx.com/edge/dhtmlx.css" 
+    type="text/css"> 
+<script src="http://cdn.dhtmlx.com/edge/dhtmlx.js" 
+    type="text/javascript"></script>
 
-    <link rel="stylesheet" href="css/css.css">
+
+    
     <script>
 
   var cal = null;
   var mod = document.getElementById("myModal");
   var span = document.getElementsByClassName("close")[0];
+  var myCalendar = null;
 
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     mod = document.getElementById("myModal");
     span = document.getElementsByClassName("close")[0];
+    myCalendar = new dhtmlXCalendarObject("box");
+    myCalendar.show();
     cal = new FullCalendar.Calendar(calendarEl, {
       plugins: [  'timeGrid', 'interaction' ],
       header: {
@@ -50,9 +51,9 @@
       titleFormat: {
         year: 'numeric', month: 'numeric', day: 'numeric'
       }, 
-      defaultDate: '2019-05-15', // Aller chercher la date du jour en PHP
-      minTime: "09:00:00", // Aller chercher depuis la base de données
-      maxTime: "22:00:00", // Aller chercher depuis la base de données
+      defaultDate: '<?= date("o-m-t") ?>',
+      minTime: "<?= $BeginTime ?>:00:00", 
+      maxTime: "<?= $EndTime + 1 ?>:00:00", 
       slotDuration: "01:00:00", // Ne pas changer, c'est bon
       navLinks: true, // can click day/week names to navigate views
       businessHours: true, // display business hours
@@ -60,7 +61,8 @@
       dateClick: CalendarDateOnClicked
     });
 
-    //$('.datepicker').datepicker();
+    $("#btnReservation").click(btnReservationOnClicked);
+
 
     span.onclick = function() {
       mod.style.display = "none";
@@ -80,6 +82,10 @@ function CalendarDateOnClicked(info)
     var event={id:1 , title: 'Test event', start:  info.dateStr};
     var el = $("#calendar");
     cal.addEvent(event);
+    myCalendar.setDate(info.dateStr);
+    var time = info.date.getHours();
+    $("#selectTime").val(time);
+    myCalendar.show();
     mod.style.display = "block";
     //alert('Clicked on: ' + info.dateStr);
     //alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
@@ -87,6 +93,13 @@ function CalendarDateOnClicked(info)
     // change the day's background color just for fun
     //info.dayEl.style.backgroundColor = 'red';
   
+}
+
+function btnReservationOnClicked()
+{
+   var Id = 1;
+   var date = 
+   mod.style.display = "none";
 }
 
 </script>
@@ -105,24 +118,34 @@ function CalendarDateOnClicked(info)
           </button>
         </div>
         <div class="modal-body">
-          <div id="date" class="datepicker"></p>
-          <div class="input-group date" data-provide="datepicker">
-            <input type="text" class="form-control">
-            <div class="input-group-addon">
-                <span class="glyphicon glyphicon-th"></span>
-            </div>
-            <select class="form-control" id="exampleFormControlSelect1">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
+          <div id="box" style="position:relative;height:250px;"></div>
+          <select class="form-control" id="selectCourts">
+            <?php
+            if(isset($courts))
+            {
+              for($i = 0; $i < count($courts); $i++)
+              {
+                echo "<option value=\"" . $courts[$i]->Id . "\">" . $courts[$i]->Name . "</option>";
+              }
+            }
+            ?>
+          </select>
+
+          <select class="form-control" id="selectTime">
+            <?php
+              if(isset($BeginTime) && isset($EndTime))
+              {
+                for($i = $BeginTime; $i <= $EndTime; $i++)
+                {
+                  echo "<option value=\"" . $i . "\">" . $i . "h</option>";
+                }
+              }
+            ?>
           </select>
         </div>
           
-        </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-primary" id="btnReservation">Reservation</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </div>
