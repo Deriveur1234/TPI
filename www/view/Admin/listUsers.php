@@ -11,29 +11,27 @@
     <title>Squash</title>
   </head>
   <body>
-    <?php include $_SERVER['DOCUMENT_ROOT'].'/view/User/NavBar.php'; ?>
-    <div class="wrapper fadeInDown">
-    <div id="formContent">
-        <!-- Tabs Titles -->
-
-        <!-- Icon -->
-        <div class="fadeIn first">
-        <h1>Mes réservations</h1>
-        </div>
-
-        <!-- Login Form -->
-        <?php
-        if(isset($reservations))
-        for($i = 0; $i < count($reservations); $i++)
+    <?php include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/NavBar.php'; ?>
+    <table class="table">
+    <tr>
+        <th scope="col">Nickname</th>
+        <th scope="col">Name + First name</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Email</th> 
+        <th scope="col">Confirmé</th>
+        <th scope="col"></th>
+    </tr>
+    <?php
+    if(isset($users))
+    {
+        for($i = 0; $i < count($users); $i++)
         {
-          $reservation = $reservations[$i];
-          include $_SERVER['DOCUMENT_ROOT'].'/view/ReservationTemplate.php';
+            $user = $users[$i];
+            include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/OneListUser.php';
         }
-
-        ?>
-
-    </div>
-    </div>
+    }
+    ?>
+    </table>
         <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

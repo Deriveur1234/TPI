@@ -77,13 +77,18 @@ class ControllerSquash
         header("Location: index.php");
     }
 
-    static function Accueil()
+    static function Accueil($role=2)
     {
         $courts = ModelCourts::GetAllCourts();
         $users = ModelUsers::GetAllUsers();
         $BeginTime = ModelPreferences::GetBeginTime();
         $EndTime = ModelPreferences::GetEndTime();
-        include  $_SERVER['DOCUMENT_ROOT'].'/view/User/listAll.php';
+        $navBar = null;
+        if($role==2)
+            $navBar =  ControllerSquash::requireToVar($_SERVER['DOCUMENT_ROOT'].'/view/User/NavBar.php');
+        else
+            $navBar =  ControllerSquash::requireToVar($_SERVER['DOCUMENT_ROOT'].'/view/Admin/NavBar.php');
+        include  $_SERVER['DOCUMENT_ROOT'].'/view/listAll.php';
     }
 
     static function MyReservations($user)
@@ -101,5 +106,29 @@ class ControllerSquash
         if($user->Role->Label == "Admin" || $reservation->User->Nickname == $user->Nickname)
             ModelReservations::DeleteReservation($reservation);
         header("Location: ?action=Accueil");
+    }
+
+    static function ShowUsers()
+    {
+        $users = ModelUsers::GetAllUsers();
+        include  $_SERVER['DOCUMENT_ROOT'].'/view/Admin/listUsers.php';
+    }
+
+    static function ManagePreferences()
+    {
+        $courts = ModelCourts::GetAllCourts();
+        $preferences = ModelPreferences::GetPreferences();
+        include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/ManagePreferences.php';
+    }
+
+    static function GetRole($user)
+    {
+        return ModelUsers::GetUserRole($user);
+    }
+
+    static function requireToVar($file){
+        ob_start();
+        require($file);
+        return ob_get_clean();
     }
 }

@@ -15,7 +15,7 @@ $action = (isset($_GET['action']))? $_GET['action'] : null;
 
 //Si l'utilisateur est connecté, récupère son role. Sinon mets le role à null
 $u = ESession::GetUser();
-$role = ($u === false) ? null : $u->Role;
+$role = ($u === false) ? ControllerSquash::GetRole($u) : $u->Role;
 
 
 if($role === null)
@@ -50,28 +50,62 @@ if($role === null)
 
 }
 
-
-switch($action)
+if($role->CodeRole == "1")
 {
-    case 'Logout' :
-        ControllerSquash::Logout();
-        break;
-    case 'Accueil' :
-        ControllerSquash::Accueil();
-        break;
-    case 'MyReservation' :
-        ControllerSquash::MyReservations($u);
-        break;
-    case 'DeleteReservation' :
-        $user = ESession::GetUser();
-        $reservation = new EReservation();
-        $reservation->Court = ModelCourts::GetCourtById(filter_input(INPUT_GET, 'idCourt', FILTER_SANITIZE_SPECIAL_CHARS));
-        $reservation->User = ModelUsers::GetUserByNickname(filter_input(INPUT_GET, 'Nickname', FILTER_SANITIZE_SPECIAL_CHARS));
-        $reservation->Date = filter_input(INPUT_GET, 'date', FILTER_SANITIZE_SPECIAL_CHARS);
-        ControllerSquash::DeleteReservation($reservation, $user);
-        break;
-    case null :
-        ControllerSquash::Accueil();
-        break;
+    switch($action)
+    {
+        case 'Logout' :
+            ControllerSquash::Logout();
+            break;
+        case 'Accueil' :
+            ControllerSquash::Accueil($role->CodeRole);
+            break;
+        case 'ShowAllUsers' :
+            ControllerSquash::ShowUsers();
+            break;
+        case 'UserProfil' :
+
+            break;
+        case 'DeleteReservation' :
+            $user = ESession::GetUser();
+            $reservation = new EReservation();
+            $reservation->Court = ModelCourts::GetCourtById(filter_input(INPUT_GET, 'idCourt', FILTER_SANITIZE_SPECIAL_CHARS));
+            $reservation->User = ModelUsers::GetUserByNickname(filter_input(INPUT_GET, 'Nickname', FILTER_SANITIZE_SPECIAL_CHARS));
+            $reservation->Date = filter_input(INPUT_GET, 'date', FILTER_SANITIZE_SPECIAL_CHARS);
+            ControllerSquash::DeleteReservation($reservation, $user);
+            break;
+        case 'Preferences' :
+            ControllerSquash::ManagePreferences();
+            break;
+        case null :
+            ControllerSquash::Accueil();
+            break;
+    }
+}
+else if($role->CodeRole == "2")
+{
+    switch($action)
+    {
+        case 'Logout' :
+            ControllerSquash::Logout();
+            break;
+        case 'Accueil' :
+            ControllerSquash::Accueil();
+            break;
+        case 'MyReservation' :
+            ControllerSquash::MyReservations($u);
+            break;
+        case 'DeleteReservation' :
+            $user = ESession::GetUser();
+            $reservation = new EReservation();
+            $reservation->Court = ModelCourts::GetCourtById(filter_input(INPUT_GET, 'idCourt', FILTER_SANITIZE_SPECIAL_CHARS));
+            $reservation->User = ModelUsers::GetUserByNickname(filter_input(INPUT_GET, 'Nickname', FILTER_SANITIZE_SPECIAL_CHARS));
+            $reservation->Date = filter_input(INPUT_GET, 'date', FILTER_SANITIZE_SPECIAL_CHARS);
+            ControllerSquash::DeleteReservation($reservation, $user);
+            break;
+        case null :
+            ControllerSquash::Accueil();
+            break;
+    }
 }
 
