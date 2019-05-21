@@ -128,7 +128,7 @@ class ModelTokens
 	
 		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		try {
-			$statement->execute(array(':e' => $nickname));
+			$statement->execute(array(':e' => $code));
 		}
 		catch (PDOException $e) {
 			echo 'Problème de lecture de la base de données: '.$e->getMessage();

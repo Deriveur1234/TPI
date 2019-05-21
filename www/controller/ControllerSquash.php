@@ -51,7 +51,7 @@ class ControllerSquash
         $Email->Body = '<html>' .
                 ' <head></head>' .
                 ' <body>'.
-                '  <p>Veuillez ouvrir ce lien pour confirmer votre compte : http://127.0.0.1/index.php?action=EmailConfirmation&token=' .
+                '  <p>Veuillez ouvrir ce lien pour confirmer votre compte : http://localhost/index.php?action=EmailConfirmation&token=' .
                     ModelTokens::GetTokenByNickname($user->Nickname)->Code. 
                 '</p>' .
                 ' </body>' .

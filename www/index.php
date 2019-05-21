@@ -43,7 +43,7 @@ if($role === null)
             ControllerSquash::EmailRegisterSend();
             break;
         case 'EmailConfirmation' :
-            $token = (isset($_GET['token'])) ? filter_input(INPUT_POST, 'token', FILTER_SANITIZE_SPECIAL_CHARS) : null;
+            $token = (isset($_GET['token'])) ? filter_input(INPUT_GET, 'token', FILTER_SANITIZE_SPECIAL_CHARS) : null;
             if($token === null)
                 break;
             ControllerSquash::EmailValidation($token);
@@ -54,7 +54,7 @@ if($role === null)
 
 }
 
-if($role->CodeRole == "1")
+if(isset($role) && $role->CodeRole == "1")
 {
     switch($action)
     {
@@ -95,7 +95,7 @@ if($role->CodeRole == "1")
             break;
     }
 }
-else if($role->CodeRole == "2")
+else if(isset($role) && $role->CodeRole == "2")
 {
     switch($action)
     {
