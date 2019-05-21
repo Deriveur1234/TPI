@@ -57,7 +57,21 @@
       navLinks: true, // can click day/week names to navigate views
       businessHours: true, // display business hours
       editable: true,
-      dateClick: CalendarDateOnClicked
+      dateClick: CalendarDateOnClicked,
+      events: [<?php
+        if(isset($reservations))
+        {
+          for($i = 0; $i < count($reservations); $i++)
+          {
+            echo "{
+              title: '" . $reservations[$i]->Court->Name . "',
+              start: '" . $reservations[$i]->Date ."',
+            }";
+            if($i < count($reservations)-1)
+              echo ",";
+          }
+        }
+      ?>]
     });
     myCalendar.loadUserLanguage('fr');
 

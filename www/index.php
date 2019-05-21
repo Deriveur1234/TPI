@@ -15,7 +15,9 @@ $action = (isset($_GET['action']))? $_GET['action'] : null;
 
 //Si l'utilisateur est connecté, récupère son role. Sinon mets le role à null
 $u = ESession::GetUser();
-$role = ($u === false) ? ControllerSquash::GetRole($u) : $u->Role;
+$role = null;
+if($u !== false)
+    $role = ($u->Role === false) ? ControllerSquash::GetRole($u) : $u->Role;
 
 
 if($role === null)
@@ -64,7 +66,8 @@ if($role->CodeRole == "1")
             ControllerSquash::ShowUsers();
             break;
         case 'UserProfil' :
-
+            $nickname = filter_input(INPUT_GET, 'Nickname', FILTER_SANITIZE_STRING);
+            ControllerSquash::showUserProfil($nickname);
             break;
         case 'DeleteReservation' :
             $user = ESession::GetUser();
@@ -76,6 +79,14 @@ if($role->CodeRole == "1")
             break;
         case 'Preferences' :
             ControllerSquash::ManagePreferences();
+            break;
+        case 'ModifyPreference' :
+            $preferences = new EPreference();
+            $preferences->BeginTime = filter_input(INPUT_POST, 'openingTime', FILTER_SANITIZE_STRING);
+            $preferences->EndTime = filter_input(INPUT_POST, 'closingTime', FILTER_SANITIZE_STRING);
+            $preferences->NbReservation = filter_input(INPUT_POST, 'nbReservationByUser', FILTER_SANITIZE_STRING);
+            ControllerSquash::updatePreferences($preferences);
+            header("Location: ?action=Preferences");
             break;
         case null :
             ControllerSquash::Accueil();

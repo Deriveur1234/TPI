@@ -81,6 +81,7 @@ class ControllerSquash
     {
         $courts = ModelCourts::GetAllCourts();
         $users = ModelUsers::GetAllUsers();
+        $reservations = ModelReservations::GetAllReservations();
         $BeginTime = ModelPreferences::GetBeginTime();
         $EndTime = ModelPreferences::GetEndTime();
         $navBar = null;
@@ -118,6 +119,8 @@ class ControllerSquash
     {
         $courts = ModelCourts::GetAllCourts();
         $preferences = ModelPreferences::GetPreferences();
+        $preferences->BeginTime = ModelPreferences::GetBeginTime() . ":00";
+        $preferences->EndTime = ModelPreferences::GetEndTime() . ":00";
         include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/ManagePreferences.php';
     }
 
@@ -130,5 +133,19 @@ class ControllerSquash
         ob_start();
         require($file);
         return ob_get_clean();
+    }
+
+    static function showUserProfil($nickname)
+    {
+        $user = ModelUsers::GetUserByNickname($nickname);
+        $reservations = ModelReservations::GetReservationsByUser($user);
+        include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/userProfil.php';
+    }
+
+    static function updatePreferences($preferences)
+    {
+        $preferences->BeginTime = "2000-00-00 " . $preferences->BeginTime . ":00";
+        $preferences->EndTime = "2000-00-00 " . $preferences->EndTime . ":00";
+        ModelPreferences::UpdatePreferences($preferences);
     }
 }

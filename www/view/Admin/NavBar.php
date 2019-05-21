@@ -23,7 +23,7 @@
                 <a class="nav-link" href="#"><?= (ESession::GetUser() === false) ? "" : ESession::GetUser()->Nickname ?></a>
             </li>
             <li class="nav-item">
-            <button class="btn btn-light">Log out</button>
+            <a href="?action=Logout"><button class="btn btn-light">Log out</button></a>
             </li>
         </ul>
         </div>
