@@ -41,8 +41,10 @@ if($role === null)
             ControllerSquash::EmailRegisterSend();
             break;
         case 'EmailConfirmation' :
-            $token = (isset($_GET['token']));
-            ControllerSquash::EmailValidation();
+            $token = (isset($_GET['token'])) ? filter_input(INPUT_POST, 'token', FILTER_SANITIZE_SPECIAL_CHARS) : null;
+            if($token === null)
+                break;
+            ControllerSquash::EmailValidation($token);
             break;
         default :
             ControllerSquash::Login();

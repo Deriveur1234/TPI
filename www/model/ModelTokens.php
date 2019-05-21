@@ -34,7 +34,30 @@ class ModelTokens
 		}
 		// On retourne null si il n'y a pas d'utilisateur
 		return null;
-    }
+	}
+	
+	static function GetTokenByCode($code)
+	{
+		$s = "SELECT `Nickname`, `ValidateTill`, `Code` FROM `tpi`.`TOKENS` WHERE `Code` = :e";
+	
+		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		try {
+			$statement->execute(array(':e' => $code));
+		}
+		catch (PDOException $e) {
+			echo 'Problème de lecture de la base de données: '.$e->getMessage();
+			return false;
+		}
+		// On parcoure les enregistrements 
+		if ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
+			// On crée l'objet EUser en l'initialisant avec les données provenant
+			// de la base de données et on le retourne 
+			return new EToken($row['Nickname'], $row['ValidateTill'], $row['Code']);
+		}
+		// On retourne null si il n'y a pas d'utilisateur
+		return null;
+	}
+
     
     /**
      * @brief Créer un token et appelle une fonction pour l'insérer en bd
@@ -81,14 +104,42 @@ class ModelTokens
         }
         return $token;
 	}
+
 	
 	/**
 	 * Accepte un utilisateur grâce à son token
 	 * @param token Le token a validé
 	 * @return bool Retourne true si l'acceptation est réussie, sinon retourne false
 	 */
-	static function acceptToken($token)
+	static function acceptToken($code)
 	{
-		
+		if(ModelTokens::isTokenValable($code))
+		{
+			ModelUsers::ConfirmUser(ModelTokens::GetTokenByCode($code)->Nickname);
+			return true;
+		}
+		return false;
+	}
+
+
+	static function isTokenValable($code)
+	{
+		$s = "SELECT `Nickname`, `ValidateTill`, `Code` FROM `tpi`.`TOKENS` WHERE `Code` = :e AND DATEDIFF(`ValidateTill`, now()) >= 0";
+	
+		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+		try {
+			$statement->execute(array(':e' => $nickname));
+		}
+		catch (PDOException $e) {
+			echo 'Problème de lecture de la base de données: '.$e->getMessage();
+			return false;
+		}
+		// On parcoure les enregistrements 
+		if ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
+			// 
+			return true;
+		}
+		// On retourne null si il n'y a pas d'utilisateur
+		return false;
 	}
 }

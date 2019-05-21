@@ -149,6 +149,22 @@ class ModelUsers
 		}
 		return ($statement->fetch() != null) ? true : false;
 	}
+
+
+	static function ConfirmUser($nickname)
+	{
+		$s = "UPDATE `TPI`.`USERS` SET `IsConfirmed` = 1 WHERE `Nickname` = :nc";
+		$statement = EDatabase::prepare($s);
+		try {
+			$statement->execute(array(':nc' => $nickname));
+		}
+		catch (PDOException $e) {
+			echo 'Problème de mise à jour dans la base de données: '.$e->getMessage();
+			return false;
+		}
+		// Ok
+		return true;
+	}
 }
 
 

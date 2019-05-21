@@ -66,9 +66,17 @@ class ControllerSquash
         include $_SERVER['DOCUMENT_ROOT'].'/view/Email/emailRegistrationSend.html';
     }
 
-    static function EmailValidation()
+    static function EmailValidation($token)
     {
-
+        if(ModelTokens::acceptToken($token))
+        {
+            include $_SERVER['DOCUMENT_ROOT'].'/view/Email/emailValidate.html';
+        }
+        else
+        {
+            include $_SERVER['DOCUMENT_ROOT'].'/view/Email/emailError.html';
+        }
+        
     }
 
     static function Logout()
