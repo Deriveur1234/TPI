@@ -85,13 +85,19 @@ class ControllerSquash
         header("Location: index.php");
     }
 
-    static function Accueil()
+    static function Accueil($role=2)
     {
         $courts = ModelCourts::GetAllCourts();
         $users = ModelUsers::GetAllUsers();
+        $reservations = ModelReservations::GetAllReservations();
         $BeginTime = ModelPreferences::GetBeginTime();
         $EndTime = ModelPreferences::GetEndTime();
-        include  $_SERVER['DOCUMENT_ROOT'].'/view/User/listAll.php';
+        $navBar = null;
+        if($role==2)
+            $navBar =  ControllerSquash::requireToVar($_SERVER['DOCUMENT_ROOT'].'/view/User/NavBar.php');
+        else
+            $navBar =  ControllerSquash::requireToVar($_SERVER['DOCUMENT_ROOT'].'/view/Admin/NavBar.php');
+        include  $_SERVER['DOCUMENT_ROOT'].'/view/listAll.php';
     }
 
     static function MyReservations($user)
@@ -109,5 +115,45 @@ class ControllerSquash
         if($user->Role->Label == "Admin" || $reservation->User->Nickname == $user->Nickname)
             ModelReservations::DeleteReservation($reservation);
         header("Location: ?action=Accueil");
+    }
+
+    static function ShowUsers()
+    {
+        $users = ModelUsers::GetAllUsers();
+        include  $_SERVER['DOCUMENT_ROOT'].'/view/Admin/listUsers.php';
+    }
+
+    static function ManagePreferences()
+    {
+        $courts = ModelCourts::GetAllCourts();
+        $preferences = ModelPreferences::GetPreferences();
+        $preferences->BeginTime = ModelPreferences::GetBeginTime() . ":00";
+        $preferences->EndTime = ModelPreferences::GetEndTime() . ":00";
+        include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/ManagePreferences.php';
+    }
+
+    static function GetRole($user)
+    {
+        return ModelUsers::GetUserRole($user);
+    }
+
+    static function requireToVar($file){
+        ob_start();
+        require($file);
+        return ob_get_clean();
+    }
+
+    static function showUserProfil($nickname)
+    {
+        $user = ModelUsers::GetUserByNickname($nickname);
+        $reservations = ModelReservations::GetReservationsByUser($user);
+        include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/userProfil.php';
+    }
+
+    static function updatePreferences($preferences)
+    {
+        $preferences->BeginTime = "2000-00-00 " . $preferences->BeginTime . ":00";
+        $preferences->EndTime = "2000-00-00 " . $preferences->EndTime . ":00";
+        ModelPreferences::UpdatePreferences($preferences);
     }
 }

@@ -19,7 +19,7 @@ class EPreference {
      * 
      ********************** A FAIRE ********************************
 	  */
-    public function __construct($InBeginTime, $InEndTime, $InNbReservation)
+    public function __construct($InBeginTime=null, $InEndTime=null, $InNbReservation=null)
     {
         $this->BeginTime = $InBeginTime;
         $this->EndTime = $InEndTime;

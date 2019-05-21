@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="css/css.css">
     <title>Squash</title>
+    
 
     <link href='./FullCalendar/core/main.css' rel='stylesheet' />
     <link href='./FullCalendar/daygrid/main.css' rel='stylesheet' />
@@ -25,8 +26,6 @@
     type="text/css"> 
 <script src="http://cdn.dhtmlx.com/edge/dhtmlx.js" 
     type="text/javascript"></script>
-
-
     
     <script>
 
@@ -58,11 +57,54 @@
       navLinks: true, // can click day/week names to navigate views
       businessHours: true, // display business hours
       editable: true,
-      dateClick: CalendarDateOnClicked
+      dateClick: CalendarDateOnClicked,
+      events: [<?php
+        if(isset($reservations))
+        {
+          for($i = 0; $i < count($reservations); $i++)
+          {
+            echo "{
+              title: '" . $reservations[$i]->Court->Name . "',
+              start: '" . $reservations[$i]->Date ."',
+            }";
+            if($i < count($reservations)-1)
+              echo ",";
+          }
+        }
+      ?>]
     });
+    myCalendar.loadUserLanguage('fr');
 
     $("#btnReservation").click(btnReservationOnClicked);
 
+    $.ajax({
+      method: 'POST',
+      url: './ajax/loadReservations.php',
+      dataType: 'json',
+        success: function (data) {
+            switch (data.ReturnCode)
+            {
+                case 1:
+                break;
+                case 0:
+                  
+                  cal.addEvent(event);
+                break;
+          }
+        }, // #end success
+        error: function (jqXHR) {
+          msg = "Une erreur est survenue. Error : "
+            switch(jqXHR.status){
+              case 200 : 
+                    msg = msg + jqXHR.status + " Le json retourné est invalide.";
+                    break;
+            case 404 : 
+                    msg = msg + jqXHR.status + " La page checklogin.php est manquante.";
+                break;
+          } // #end switch
+        alert(msg);
+        } // #end error
+    });
 
     span.onclick = function() {
       mod.style.display = "none";
@@ -81,7 +123,6 @@ function CalendarDateOnClicked(info)
 
     var event={id:1 , title: 'Test event', start:  info.dateStr};
     var el = $("#calendar");
-    cal.addEvent(event);
     myCalendar.setDate(info.dateStr);
     var time = info.date.getHours();
     $("#selectTime").val(time);
@@ -90,22 +131,57 @@ function CalendarDateOnClicked(info)
     //alert('Clicked on: ' + info.dateStr);
     //alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
     //alert('Current view: ' + info.view.type);
-    // change the day's background color just for fun
+    //change the day's background color just for fun
     //info.dayEl.style.backgroundColor = 'red';
   
 }
 
 function btnReservationOnClicked()
 {
-   var Id = 1;
-   var date = 
-   mod.style.display = "none";
+  var Id = 1;
+  var date = myCalendar.getDate();
+  var hours = $("#selectTime option:selected").val();
+  date.setHours(hours);
+  var Title = $("#selectCourts option:selected").text();
+  var idCourt = $("#selectCourts option:selected").val();
+  //var reservation = '{"IdCourt":' + idCourt + ', "Date":"' + date + '"}';
+  //reservation = JSON.parse(reservation);
+  var event = {id: Id, title: Title, start: date};
+  $.ajax({
+        method: 'POST',
+        url: './ajax/saveReservation.php',
+        data: {'IdCourt': idCourt, 'Date': date},
+        dataType: 'json',
+          success: function (data) {
+              switch (data.ReturnCode)
+              {
+                  case 1:
+                  break;
+                  case 0:
+                    cal.addEvent(event);
+                  break;
+            }
+          }, // #end success
+          error: function (jqXHR) {
+            msg = "Une erreur est survenue. Error : "
+              switch(jqXHR.status){
+                case 200 : 
+                      msg = msg + jqXHR.status + " Le json retourné est invalide.";
+                      break;
+              case 404 : 
+                      msg = msg + jqXHR.status + " La page checklogin.php est manquante.";
+                  break;
+            } // #end switch
+          alert(msg);
+          } // #end error
+  });
+  mod.style.display = "none";
 }
 
 </script>
   </head>
   <body>
-    <?php include $_SERVER['DOCUMENT_ROOT'].'/view/User/NavBar.php'; ?>
+    <?php if(isset($navBar)) echo $navBar; ?>
     
     <div id='calendar'></div>
     <div id="myModal" class="modal" tabindex="-1" role="dialog">
@@ -118,7 +194,7 @@ function btnReservationOnClicked()
           </button>
         </div>
         <div class="modal-body">
-          <div id="box" style="position:relative;height:250px;"></div>
+          <div id="box" style="position:absolute;height:250px;"></div>
           <select class="form-control" id="selectCourts">
             <?php
             if(isset($courts))
@@ -154,7 +230,7 @@ function btnReservationOnClicked()
         <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
    
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
   </body>

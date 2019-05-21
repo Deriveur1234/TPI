@@ -11,16 +11,26 @@
     <title>Squash</title>
   </head>
   <body>
-    <?php include $_SERVER['DOCUMENT_ROOT'].'/view/User/NavBar.php'; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/NavBar.php'; ?>
     <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Tabs Titles -->
 
         <!-- Icon -->
         <div class="fadeIn first">
-        <h1>Mes réservations</h1>
+        <h1>Profil</h1>
         </div>
 
+        <table class="table">
+          <tr>
+            <td> Name : <?= $user->Name ?> </td>
+            <td> Firstname : <?= $user->FirstName ?> </td>
+          </tr>
+          <tr>
+            <td> Email : <?= $user->Email ?> </td>
+            <td> Phone : <?= $user->Phone ?> </td>
+          </tr>
+        </table>
         <!-- Login Form -->
         <?php
         if(isset($reservations))

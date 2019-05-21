@@ -137,7 +137,7 @@ class ModelUsers
 	 */
 	static function CheckLogin($User)
 	{
-		$s = "SELECT COUNT(*) FROM `tpi`.`USERS` WHERE `Nickname` = :e AND `Password` = :p";
+		$s = "SELECT COUNT(*) FROM `tpi`.`USERS` WHERE `Nickname` = :e AND `Password` = :p AND `IsConfirmed` = 1";
 	
 		$statement = EDatabase::prepare($s,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 		try {
@@ -147,7 +147,22 @@ class ModelUsers
 			echo 'Problème de lecture de la base de données: '.$e->getMessage();
 			return false;
 		}
-		return ($statement->fetch() != null) ? true : false;
+		return ($statement->fetch()["COUNT(*)"] > 0) ? true : false;
+	}
+
+	static function UpdateConfirmation($nickname, $isConfirmed)
+	{
+		$s = "UPDATE `TPI`.`USERS` SET  `IsConfirmed` = :ic WHERE `Nickname` = :nc";
+		$statement = EDatabase::prepare($s);
+		try {
+			$statement->execute(array(':nc' => $nickname, ':ic' => $isConfirmed ));
+		}
+		catch (PDOException $e) {
+			echo 'Problème de mise à jour dans la base de données: '.$e->getMessage();
+			return false;
+		}
+		// Ok
+		return true;
 	}
 
 
