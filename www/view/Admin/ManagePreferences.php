@@ -11,6 +11,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <title>Squash</title>
     <script>
+      var listItems = [];
       $(document).ready(function(){
         $('#btnDeleteCourt').click(function(){
           var courtName = $('#selectCourt option:selected').val();
@@ -42,8 +43,96 @@
             alert(msg);
             } // #end error
           });
+        }); //#end delete court click
+
+        $('#btnAddCourt').click(function(){
+
+          // On remplit le tableau avec les coourts existants
+          listItems = [];
+          $('#selectCourt').children().each(function () {
+            listItems.push($(this).val());
+          });
+          $('#edtCourtName').val("");
+          $('#edtCourtName').show();
+
+          $('#edtCourtName').focus();
+
+        }); //#end add court click
+
+        $('#btnDeleteCourt').click(function(){
+
+          var s =  $('selectCourt option:selected').val();
+          
+        }); //#end add court click
+
+        $( "#edtCourtName" ).keyup(function() {
+
+          var s = $(this).val();
+
+          // Return pressé?
+          if ( event.which == 13 ) { 
+               event.preventDefault();
+               // Ajouter le court en ajax si pas encore utilisé
+               if (listItems.indexOf(s) < 0){
+                  // Appel fonction ajout cour
+                  $.ajax({
+                    method: 'POST',
+                    url: './ajax/addCourt.php',
+                    data: {'CourtName': s},
+                    dataType: 'json',
+                    success: function (data) {
+                        switch (data.ReturnCode)
+                        {
+                            case 1:
+                            break;
+                            case 0:
+                                alert(data.Message);
+                            break;
+                      }
+                    }, // #end success
+                    error: function (jqXHR) {
+                      msg = "Une erreur est survenue. Error : "
+                        switch(jqXHR.status){
+                          case 200 : 
+                                msg = msg + jqXHR.status + " Le json retourné est invalide.";
+                                break;
+                        case 404 : 
+                                msg = msg + jqXHR.status + " La page checklogin.php est manquante.";
+                            break;
+                      } // #end switch
+                    alert(msg);
+                    } // #end error
+                  });
+                  // On cache l'edit
+                  $('#edtCourtName').hide();
+               }
+
+
+          }            
+          // Escape pressé?
+          if ( event.which == 27 ) { 
+               event.preventDefault();
+
+               $('#edtCourtName').hide();
+
+          }            
+
+          // Est-ce vide ?
+          if (s.length > 0)
+              $(this).css('background-color', '');
+          else
+              $(this).css('background-color', 'red');
+
+          // Est-ce déjà utilisé ?
+          if (listItems.indexOf(s) < 0)
+              $(this).css('color', 'black');
+          else
+              $(this).css('color', 'red');
+
         });
-      });
+
+
+      }); //#end document ready
     </script>
   </head>
   <body>
@@ -73,9 +162,8 @@
                 </td>
               </tr>
               <tr>
-                  <td><a>Add</a></td>
-                  <td ><a>Edit</a></td>
-                  <td id="btnDeleteCourt"><a>Delete</a></td>
+                  <td colspan="2"><input type="button" id="btnAddCourt" value="Add" style="width:30px"/><input type="text" id="edtCourtName" style="display:none"></td>
+                  <td><input type="button" id="btnDeleteCourt" value="Delete" style="width:30px"/></td>
               </tr>
               <tr>
                   <td colspan="3"><h3>Paramètres généraux<h3></td>
