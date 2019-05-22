@@ -104,11 +104,13 @@ class ModelCourts
     }
     
     /**
-     ********* A FAIRE ***********
-     */
+	   * @brief Supprime un Court  
+	   * @param Court le court que l'on souhaite supprimer
+	   * @return [bool] Retourne true si la suppression est réussie, sinon retourne false
+	   */
     static function DeleteCourt($Court)
     {
-				if(ModelCourts::IsCourtReferenc($Court))
+				if(ModelCourts::IsCourtReference($Court))
 					return ModelCourts::MarkCourtDeleted($Court);
 				else
 				{
@@ -126,7 +128,11 @@ class ModelCourts
 				}
 		}
 		
-		static function IsCourtReferenc($court)
+		/**
+		 * @brief Retourne true si le court est lié à une ou plusieurs reservation sinon false
+		 * @param court de type ECourt, le court à recherché
+		 */
+		static function IsCourtReference($court)
 		{
 			$s = "SELECT COUNT(*) FROM `tpi`.`RESERVATIONS` WHERE `IdCourt` = :e";
 	

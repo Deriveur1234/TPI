@@ -131,7 +131,7 @@ class ModelUsers
 	}
 
 	/**
-	 * @brief Retourne si le password et le nickname sont dans la base
+	 * @brief Retourne true si le password et le nickname sont dans la base
 	 * @param User De type EUser, doit contenir le nickname et le password
 	 * @return [bool] Retourne true si l'utilisateur et le password corréspondent
 	 */
@@ -150,6 +150,13 @@ class ModelUsers
 		return ($statement->fetch()["COUNT(*)"] > 0) ? true : false;
 	}
 
+
+	/**
+	 * @brief Update le champ IsConfirmed d'un utilisateur
+	 * @param nickname De type string, contient le nickname de l'utilisateur à update
+	 * @param isConfirmed De type Boolean, contient la valeur du champ à update
+	 * @return [bool] Retourne true si l'update a réussie
+	 */
 	static function UpdateConfirmation($nickname, $isConfirmed)
 	{
 		$s = "UPDATE `TPI`.`USERS` SET  `IsConfirmed` = :ic WHERE `Nickname` = :nc";
@@ -165,20 +172,14 @@ class ModelUsers
 		return true;
 	}
 
-
+	/**
+	 * @brief Update le champ IsConfirmed d'un utilisateur à 1
+	 * @param nickname De type string, contient le nickname de l'utilisateur à update
+	 * @return [bool] Retourne true si l'update a réussie
+	 */
 	static function ConfirmUser($nickname)
 	{
-		$s = "UPDATE `TPI`.`USERS` SET `IsConfirmed` = 1 WHERE `Nickname` = :nc";
-		$statement = EDatabase::prepare($s);
-		try {
-			$statement->execute(array(':nc' => $nickname));
-		}
-		catch (PDOException $e) {
-			echo 'Problème de mise à jour dans la base de données: '.$e->getMessage();
-			return false;
-		}
-		// Ok
-		return true;
+		return ModelUsers::($nickname, 1);
 	}
 }
 

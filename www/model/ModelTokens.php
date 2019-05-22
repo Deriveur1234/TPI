@@ -12,7 +12,7 @@ class ModelTokens
     /**
 	 * @brief Cherche un Token par son nickname dans la table 
 	 * @param nickname	Le nickname a recherché dans la base de donnée
-	 * @return [EUser] Retourne le premier token du résultat de la requête
+	 * @return [EToken] Retourne le premier token du résultat de la requête
 	 */
 	static function GetTokenByNickname($nickname)
 	{
@@ -28,7 +28,7 @@ class ModelTokens
 		}
 		// On parcoure les enregistrements 
 		if ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
-			// On crée l'objet EUser en l'initialisant avec les données provenant
+			// On crée l'objet EToken en l'initialisant avec les données provenant
 			// de la base de données et on le retourne 
 			return new EToken($row['Nickname'], $row['ValidateTill'], $row['Code']);
 		}
@@ -36,6 +36,11 @@ class ModelTokens
 		return null;
 	}
 	
+	/**
+	 * @brief Cherche un Token par son code dans la table 
+	 * @param code	Le code a recherché dans la base de donnée
+	 * @return [EToken] Retourne le premier token du résultat de la requête
+	 */
 	static function GetTokenByCode($code)
 	{
 		$s = "SELECT `Nickname`, `ValidateTill`, `Code` FROM `tpi`.`TOKENS` WHERE `Code` = :e";
@@ -73,7 +78,7 @@ class ModelTokens
 
     /**
 	 * @brief Ajoute un token dans la base de donnée
-	 * @param Token le token a ajouté sous forme de EUser
+	 * @param Token le token a ajouté sous forme de EToken
 	 * @return [bool] Retourne true si l'ajout est réussi, sinon retourne false
 	 */
     static function InsertToken($Token)
@@ -107,7 +112,7 @@ class ModelTokens
 
 	
 	/**
-	 * Accepte un utilisateur grâce à son token
+	 * @brief Accepte un utilisateur grâce à son token
 	 * @param token Le token a validé
 	 * @return bool Retourne true si l'acceptation est réussie, sinon retourne false
 	 */
@@ -121,7 +126,11 @@ class ModelTokens
 		return false;
 	}
 
-
+	/**
+	 * @brief Vérifie si le token est toujours valable
+	 * @param Code le code du token a vérifié
+	 * @return bool Retourne true si le token est valable sinon false
+	 */
 	static function isTokenValable($code)
 	{
 		$s = "SELECT `Nickname`, `ValidateTill`, `Code` FROM `tpi`.`TOKENS` WHERE `Code` = :e AND DATEDIFF(`ValidateTill`, now()) >= 0";

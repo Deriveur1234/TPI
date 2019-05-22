@@ -1,16 +1,5 @@
 <?php
-/**
- * @brief	Objet Role
- * @remark  Cet objet est utilisé comme conteneur
- * 
- *          Exemple d'utilisation 1
- *          $u = new ERole();
- *          $u->IdRole = 1;
- *          $u->Name = "Admin";
- * 
- *          Exemple d'utilisation 2
- *          $u = new ERole(1, "Admin");
- */
+
 class ESession {
 
     /**
@@ -22,6 +11,10 @@ class ESession {
         $_SESSION['User'] = serialize($user);
     }
 
+    /**
+     * @brief Retourne l'objet EUser stocké en session
+     * @return EUser user l'objet user
+     */
     public static function GetUser()
     {
         if (isset($_SESSION['User']))

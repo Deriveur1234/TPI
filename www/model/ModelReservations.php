@@ -177,10 +177,4 @@ class ModelReservations
 	}
 
 
-	static function GetReservationsForAWeek($dateBeginWeek)
-	{
-		
-	}
-
-
 }

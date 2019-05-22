@@ -7,6 +7,10 @@
 
 class ModelEmailSender
 {
+    /**
+     * @brief Permet d'envoyer un email grâce à l'api Swiftmailer
+     * @param Email Un objet EEmail contenant les données pour envoyer un email
+     */
     static function SendEmail($Email)
     {
          // On doit créer une instance de transport smtp avec les constantes

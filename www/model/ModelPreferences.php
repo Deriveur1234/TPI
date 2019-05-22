@@ -8,7 +8,7 @@
 class ModelPreferences
 {
     /**
-	 * @brief Retourne un onjet EPreferences contenant les préférences
+	 * @brief Retourne un objet EPreferences contenant les préférences
 	 * @return [EPreferences] Les préférences dans un objet
 	 */
     static function GetPreferences()
@@ -25,7 +25,7 @@ class ModelPreferences
 		}
 		// On parcoure les enregistrements 
 		while ($row=$statement->fetch(PDO::FETCH_ASSOC,PDO::FETCH_ORI_NEXT)){
-			// On crée l'objet EUser en l'initialisant avec les données provenant
+			// On crée l'objet EPreferences en l'initialisant avec les données provenant
             // de la base de données et on le retourne
 			return new EPreference($row['BeginTime'], $row['EndTime'], $row['NbReservationsByUser']);
 		}        
@@ -53,7 +53,10 @@ class ModelPreferences
 		return true;
 	}
 	
-
+	/**
+	 * @brief Retourne le débuts des horaires d'ouvertur dans le format "H"
+	 * @return [string] Retourne le début des horaires d'ouverture
+	 */
 	static function GetBeginTime()
 	{
 		$Preferences = ModelPreferences::GetPreferences();
@@ -62,6 +65,10 @@ class ModelPreferences
 		return date('H', $BeginTime);
 	}
 
+	/**
+	 * @brief Retourne la fin des horaires d'ouverture dans le format "H"
+	 * @return [string] Retourne la fin des horaires d'ouverture
+	 */
 	static function GetEndTime()
 	{
 		$Preferences = ModelPreferences::GetPreferences();
