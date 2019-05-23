@@ -87,6 +87,7 @@ class ControllerSquash
 
     static function Accueil($role=2)
     {
+        $doc = $_SERVER['DOCUMENT_ROOT'].'/view/DocUtilisateur/DocAccueil.html';
         $courts = ModelCourts::GetAllCourts();
         $users = ModelUsers::GetAllUsers();
         $reservations = ModelReservations::GetAllReservations();
@@ -102,6 +103,7 @@ class ControllerSquash
 
     static function MyReservations($user)
     {
+        $doc = '/view/DocUtilisateur/DocMyProfil.html';
         $reservations = ModelReservations::GetReservationsByUser($user);
         include  $_SERVER['DOCUMENT_ROOT'].'/view/User/myReservations.php';
     }
@@ -119,12 +121,14 @@ class ControllerSquash
 
     static function ShowUsers()
     {
+        $doc = "/view/DocUtilisateur/DocProfils.html";
         $users = ModelUsers::GetAllUsers();
         include  $_SERVER['DOCUMENT_ROOT'].'/view/Admin/listUsers.php';
     }
 
     static function ManagePreferences()
     {
+        $doc = "/view/DocUtilisateur/DocParametre.html";
         $courts = ModelCourts::GetAllCourts();
         $preferences = ModelPreferences::GetPreferences();
         $preferences->BeginTime = ModelPreferences::GetBeginTime() . ":00";
@@ -145,6 +149,7 @@ class ControllerSquash
 
     static function showUserProfil($nickname)
     {
+        $doc = '/view/DocUtilisateur/DocProfilUser.html';
         $user = ModelUsers::GetUserByNickname($nickname);
         $reservations = ModelReservations::GetReservationsByUser($user);
         include $_SERVER['DOCUMENT_ROOT'].'/view/Admin/userProfil.php';

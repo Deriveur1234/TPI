@@ -179,7 +179,7 @@ class ModelUsers
 	 */
 	static function ConfirmUser($nickname)
 	{
-		return ModelUsers::($nickname, 1);
+		return ModelUsers::UpdateConfirmation($nickname, 1);
 	}
 }
 

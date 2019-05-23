@@ -22,6 +22,23 @@
             <li class="nav-item">
             <a href="?action=Logout"><button class="btn btn-light">Log out</button></a>
             </li>
+            <?php
+            if(isset($doc))
+            {
+            ?>
+            <li>
+                <a href="<?=$doc?>" target="_blank">?</a>
+            </li>
+            <?php
+            }
+            else{
+            ?>
+            <li>
+                <a href="/view/DocUtilisateur/DocAccueil.html" target="_blank">?</a>
+            </li>
+            <?php
+            }
+            ?>
         </ul>
         </div>
     </div>

@@ -193,9 +193,9 @@ function btnReservationOnClicked()
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="width: 40vh">
           <div id="box" style="position:absolute;height:250px;"></div>
-          <select class="form-control" id="selectCourts">
+          <select class="form-control" id="selectCourts" style="float:right">
             <?php
             if(isset($courts))
             {
@@ -207,7 +207,7 @@ function btnReservationOnClicked()
             ?>
           </select>
 
-          <select class="form-control" id="selectTime">
+          <select class="form-control" id="selectTime" style="float:right">
             <?php
               if(isset($BeginTime) && isset($EndTime))
               {
